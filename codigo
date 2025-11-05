@@ -134,7 +134,7 @@ else:
         elif escolha == "6":
             remover_produto()
         elif escolha == "7":
-            print("🔚 Saindo do sistema...")
+            print(" Saindo do sistema...")
             break
         else: 
             print(" Opção inválida. Tente novamente.")
