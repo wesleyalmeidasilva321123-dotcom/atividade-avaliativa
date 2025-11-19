@@ -1,114 +1,104 @@
-dicionario = {
-    1: {"nome": "arroz 5kg", "quantidade": 22, "valor": 24.90},
-    2: {"nome": "feijão 1kg", "quantidade": 15, "valor": 8.75},
-    3: {"nome": "óleo de soja 900ml", "quantidade": 19, "valor": 7.99},
-    4: {"nome": "açúcar refinado 1kg", "quantidade": 12, "valor": 4.89},
-    5: {"nome": "leite integral 1L", "quantidade": 25, "valor": 5.49},
-    6: {"nome": "café torrado 500g", "quantidade": 30, "valor": 16.90},
-    7: {"nome": "macarrão espaguete 500g", "quantidade": 18, "valor": 3.99},
-    8: {"nome": "farinha de trigo 1kg", "quantidade": 20, "valor": 4.59},
-    9: {"nome": "biscoito recheado 120g", "quantidade": 14, "valor": 2.99},
-    10: {"nome": "papel higiênico (12 rolos)", "quantidade": 10, "valor": 18.90}
+def autenticar():
+    usuario_correto = "admin"
+    senha_correta = "1234"
+    usuario = input("Usuário: ")
+    senha = input("Senha: ")
 
-}
-
-def visualizar_estoque():
-    print("\n Estoque Atual:")
-    for codigo, produto in dicionario.items():
-        print(f"Cód: {codigo} | {produto['nome']} - Quantidade: {produto['quantidade']} - R$ {produto['valor']:.2f}")
-
-def cadastrar_produto():
-    nome = input("Nome do novo produto: ")
-    quantidade = int(input("Quantidade inicial: "))
-    valor = float(input("Valor unitário: "))
-    novo_codigo = max(dicionario.keys()) + 1 if dicionario else 1
-    dicionario[novo_codigo] = {"nome": nome, "quantidade": quantidade, "valor": valor}
-    print(" Produto adicionado!")
-
-def atualizar_quantidade():
-    codigo = int(input("Digite o código do produto: "))
-    if codigo in dicionario:
-        nova_qtd = int(input("Nova quantidade: "))
-        dicionario[codigo]["quantidade"] = nova_qtd
-        print(" Quantidade atualizada!")
+    if usuario == usuario_correto and senha == senha_correta:
+        print("Acesso permitido.")
+        return True
     else:
-        print(" Código não encontrado.")
-
-def pesquisar_produto():
-    nome_pesquisado = input("Digite o nome exato do produto: ").strip().lower()
-    encontrado = False
-    for codigo, produto in dicionario.items():
-        if produto["nome"].lower() == nome_pesquisado:
-            print("\n Produto encontrado:")
-            print(f"Cód: {codigo} | Nome: {produto['nome']} | Quantidade: {produto['quantidade']} | Valor: R$ {produto['valor']:.2f}")
-            encontrado = True
-            break
-    if not encontrado:
-        print(" Produto não encontrado. Verifique o nome digitado.")
-
-def relatorio_produtos():
-    print("\n Relatório de Produtos:")
-
-    if not dicionario:
-        print(" Estoque vazio.")
-        return
-
-    total_itens = 0
-    valor_total = 0
-
-    mais_caro = None
-    mais_barato = None
-    maior_estoque = None
-    menor_estoque = None
-
-    for codigo, produto in dicionario.items():
-        quantidade = produto["quantidade"]
-        valor = produto["valor"]
-        total_itens += quantidade
-        valor_total += quantidade * valor
-
-        if mais_caro is None or valor > dicionario[mais_caro]["valor"]:
-            mais_caro = codigo
-
-        if mais_barato is None or valor < dicionario[mais_barato]["valor"]:
-            mais_barato = codigo
-
-        if maior_estoque is None or quantidade > dicionario[maior_estoque]["quantidade"]:
-            maior_estoque = codigo
-
-        if menor_estoque is None or quantidade < dicionario[menor_estoque]["quantidade"]:
-            menor_estoque = codigo
-
-    print(f" Total de itens no estoque: {total_itens}")
-    print(f" Valor total do estoque: R$ {valor_total:.2f}")
-    print(f" Produto mais caro: {dicionario[mais_caro]['nome']} (R$ {dicionario[mais_caro]['valor']:.2f})")
-    print(f" Produto mais barato: {dicionario[mais_barato]['nome']} (R$ {dicionario[mais_barato]['valor']:.2f})")
-    print(f" Produto com maior quantidade: {dicionario[maior_estoque]['nome']} ({dicionario[maior_estoque]['quantidade']} unidades)")
-    print(f" Produto com menor quantidade: {dicionario[menor_estoque]['nome']} ({dicionario[menor_estoque]['quantidade']} unidades)")
-
-def remover_produto():
-    codigo = int(input("Digite o código do produto que deseja remover: "))
-    if codigo in dicionario:
-        removido = dicionario.pop(codigo)
-        print(f"🗑 Produto '{removido['nome']}' removido com sucesso.")
-    else:
-        print(" Código não encontrado.")
-
-usuario_correto = "1"
-senha_correta = "1"
-
-usuario = input("Usuário: ")
-senha = input("Senha: ")
-
-if usuario == usuario_correto and senha == senha_correta:
-    print("Acesso permitido ")
-
-else:
-    print(" Usuário ou senha incorretos.")
+        print("Usuário ou senha incorretos.")
+        return False
 
 
 
+class Produto:
+    
+    def _init_(self, nome, quantidade, valor):
+        self.nome = nome
+        self.quantidade = quantidade
+        self.valor = valor
 
+    def calcular_total(self):
+        return self.quantidade * self.valor
+
+    def mostrar_informacoes(self):
+        print(f"Nome: {self.nome}")
+        print(f"Quantidade: {self.quantidade}")
+        print(f"Valor unitário: R$ {self.valor:.2f}")
+        print(f"Total: R$ {self.calcular_total():.2f}")
+
+
+class Estoque:
+    def _init_(self):
+        self.produtos = {}
+
+    def adicionar_produto(self, nome, quantidade, valor):
+        codigo = max(self.produtos.keys(), default=0) + 1
+        self.produtos[codigo] = Produto(nome, quantidade, valor)
+        print(f"Produto '{nome}' adicionado com sucesso.")
+
+    def visualizar_estoque(self):
+        if not self.produtos:
+            print("\nEstoque vazio.")
+            return
+        print("\nEstoque Atual:")
+        for codigo, produto in self.produtos.items():
+            print(f"Cód: {codigo} | {produto.nome} - Quantidade: {produto.quantidade} - R$ {produto.valor:.2f}")
+
+    def atualizar_quantidade(self, codigo, nova_quantidade):
+        if codigo in self.produtos:
+            self.produtos[codigo].quantidade = nova_quantidade
+            print("Quantidade atualizada com sucesso.")
+        else:
+            print("Produto não encontrado.")
+
+    def pesquisar_produto(self, nome):
+        for codigo, produto in self.produtos.items():
+            if produto.nome.lower() == nome.lower():
+                produto.mostrar_informacoes()
+                return
+        print("Produto não encontrado.")
+
+    def relatorio_produtos(self):
+        if not self.produtos:
+            print("\nEstoque vazio.")
+            return
+
+        total_itens = 0
+        valor_total = 0
+        mais_caro = max(self.produtos.values(), key=lambda p: p.valor, default=None)
+        mais_barato = min(self.produtos.values(), key=lambda p: p.valor, default=None)
+        maior_estoque = max(self.produtos.values(), key=lambda p: p.quantidade, default=None)
+        menor_estoque = min(self.produtos.values(), key=lambda p: p.quantidade, default=None)
+
+        for produto in self.produtos.values():
+            total_itens += produto.quantidade
+            valor_total += produto.calcular_total()
+
+        print("\nRelatório de Produtos:")
+        print(f"Total de itens no estoque: {total_itens}")
+        print(f"Valor total do estoque: R$ {valor_total:.2f}")
+        print(f"Produto mais caro: {mais_caro.nome} (R$ {mais_caro.valor:.2f})")
+        print(f"Produto mais barato: {mais_barato.nome} (R$ {mais_barato.valor:.2f})")
+        print(f"Produto com maior quantidade: {maior_estoque.nome} ({maior_estoque.quantidade} unidades)")
+        print(f"Produto com menor quantidade: {menor_estoque.nome} ({menor_estoque.quantidade} unidades)")
+
+    def remover_produto(self, codigo):
+        if codigo in self.produtos:
+            removido = self.produtos.pop(codigo)
+            print(f"Produto '{removido.nome}' removido com sucesso.")
+        else:
+            print("Produto não encontrado.")
+
+#Codigo 2
+
+from funcoes import autenticar
+from funcoes import Estoque
+
+if autenticar():
+    estoque = Estoque()
 
     while True:
         print("\n--- Menu Estoque ---")
@@ -121,20 +111,28 @@ else:
         print("7. Sair")
 
         escolha = input("Escolha uma opção (1-7): ")
+
         if escolha == "1":
-            visualizar_estoque()
+            estoque.visualizar_estoque()
         elif escolha == "2":
-            cadastrar_produto()
+            nome = input("Nome do produto: ")
+            quantidade = int(input("Quantidade inicial: "))
+            valor = float(input("Valor unitário: "))
+            estoque.adicionar_produto(nome, quantidade, valor)
         elif escolha == "3":
-            atualizar_quantidade()
+            codigo = int(input("Digite o código do produto: "))
+            nova_quantidade = int(input("Nova quantidade: "))
+            estoque.atualizar_quantidade(codigo, nova_quantidade)
         elif escolha == "4":
-            pesquisar_produto()
+            nome = input("Digite o nome do produto: ")
+            estoque.pesquisar_produto(nome)
         elif escolha == "5":
-            relatorio_produtos()
+            estoque.relatorio_produtos()
         elif escolha == "6":
-            remover_produto()
+            codigo = int(input("Digite o código do produto a ser removido: "))
+            estoque.remover_produto(codigo)
         elif escolha == "7":
-            print(" Saindo do sistema...")
+            print("Saindo do sistema...")
             break
-        else: 
-            print(" Opção inválida. Tente novamente.")
+        else:
+            print("Opção inválida. Tente novamente.")
